@@ -8,6 +8,48 @@
       "when": 1788633662607,
       "tag": "0000_lush_roland_deschain",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788660281303,
+      "tag": "0001_motionless_blue_blade",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788660615340,
+      "tag": "0002_lethal_gauntlet",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788665538903,
+      "tag": "0003_crazy_greymalkin",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788965765361,
+      "tag": "0004_rainy_justice",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788973646148,
+      "tag": "0005_past_human_torch",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789224796726,
+      "tag": "0006_cool_mimic",
+      "breakpoints": true
     }
   ]
 }

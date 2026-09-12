@@ -1,4 +1,14 @@
-# React + TypeScript + Vite
+# Bags Admin
+
+The dashboard foundation, admin login, responsive shell and live overview are
+implemented. Start the API, then run `npm run dev` here. The default API URL is
+`http://localhost:3000`; use `.env.example` to configure a different URL.
+
+Use an existing admin account. See [frontend architecture](docs/architecture.md)
+for feature ownership, authentication behavior, verification and next milestones.
+Run `npm run build` and `npm run lint` to check changes.
+
+## Original Vite setup reference
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

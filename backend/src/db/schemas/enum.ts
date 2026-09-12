@@ -18,6 +18,7 @@ export const paymentStatusEnum = pgEnum('payment_status', [
   'pending',
   'paid',
   'failed',
+  'partially_refunded',
   'refunded',
 ]);
 

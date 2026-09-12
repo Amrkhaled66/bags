@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import {
   boolean,
   integer,
+  index,
   numeric,
   pgTable,
   primaryKey,
@@ -12,31 +13,44 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { categories } from './categories';
+import { brands } from './brands';
 import { productStatusEnum } from './enum';
 
-export const products = pgTable('products', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  sku: varchar('sku', { length: 100 }).unique(),
-  name: varchar('name', { length: 200 }),
-  slug: varchar('slug', { length: 220 }).unique(),
-  description: text('description'),
-  sellerPrice: numeric('seller_price', { precision: 12, scale: 2 }),
-  originalPrice: numeric('original_price', { precision: 12, scale: 2 }),
-  discountedPrice: numeric('discounted_price', { precision: 12, scale: 2 }),
-  lengthCm: numeric('length_cm', { precision: 8, scale: 2 }),
-  widthCm: numeric('width_cm', { precision: 8, scale: 2 }),
-  status: productStatusEnum('status'),
-  isFeatured: boolean('is_featured'),
-  isNewArrival: boolean('is_new_arrival'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
-});
+export const products = pgTable(
+  'products',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    brandId: uuid('brand_id').references(() => brands.id, {
+      onDelete: 'set null',
+    }),
+    sku: varchar('sku', { length: 100 }).unique(),
+    name: varchar('name', { length: 200 }),
+    slug: varchar('slug', { length: 220 }).unique(),
+    description: text('description'),
+    imageUrl: text('image_url'),
+    sellerPrice: numeric('seller_price', { precision: 12, scale: 2 }),
+    originalPrice: numeric('original_price', { precision: 12, scale: 2 }),
+    discountedPrice: numeric('discounted_price', { precision: 12, scale: 2 }),
+    lengthCm: numeric('length_cm', { precision: 8, scale: 2 }),
+    widthCm: numeric('width_cm', { precision: 8, scale: 2 }),
+    status: productStatusEnum('status'),
+    isFeatured: boolean('is_featured'),
+    isNewArrival: boolean('is_new_arrival'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+  },
+  (table) => [index('products_brand_id_idx').on(table.brandId)],
+);
 
 export const productCategories = pgTable(
   'product_categories',
   {
-    productId: uuid('product_id').references(() => products.id),
-    categoryId: uuid('category_id').references(() => categories.id),
+    productId: uuid('product_id')
+      .notNull()
+      .references(() => products.id),
+    categoryId: uuid('category_id')
+      .notNull()
+      .references(() => categories.id),
   },
   (table) => [primaryKey({ columns: [table.productId, table.categoryId] })],
 );
@@ -70,9 +84,35 @@ export const inventory = pgTable('inventory', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export const productsRelations = relations(products, ({ many }) => ({
+export const productVariantImages = pgTable(
+  'product_variant_images',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    variantId: uuid('variant_id')
+      .notNull()
+      .references(() => productVariants.id, { onDelete: 'cascade' }),
+    imageUrl: text('image_url').notNull(),
+    sortOrder: integer('sort_order').notNull(),
+  },
+  (table) => [
+    uniqueIndex('variant_images_position_unique').on(
+      table.variantId,
+      table.sortOrder,
+    ),
+  ],
+);
+
+export const productsRelations = relations(products, ({ many, one }) => ({
+  brand: one(brands, {
+    fields: [products.brandId],
+    references: [brands.id],
+  }),
   productCategories: many(productCategories),
   variants: many(productVariants),
+}));
+
+export const brandsRelations = relations(brands, ({ many }) => ({
+  products: many(products),
 }));
 
 export const productCategoriesRelations = relations(

@@ -16,6 +16,8 @@ import { products, productVariants } from './products';
 export const orders = pgTable('orders', {
   id: uuid('id').defaultRandom().primaryKey(),
   orderNumber: varchar('order_number', { length: 50 }).unique(),
+  idempotencyKey: uuid('idempotency_key').unique(),
+  accessTokenHash: varchar('access_token_hash', { length: 64 }),
   customerId: uuid('customer_id').references(() => customers.id),
   customerName: varchar('customer_name', { length: 150 }),
   customerPhone: varchar('customer_phone', { length: 30 }),
@@ -29,6 +31,9 @@ export const orders = pgTable('orders', {
   shippingPrice: numeric('shipping_price', { precision: 12, scale: 2 }),
   total: numeric('total', { precision: 12, scale: 2 }),
   couponId: uuid('coupon_id').references(() => coupons.id),
+  reservationExpiresAt: timestamp('reservation_expires_at', {
+    withTimezone: true,
+  }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
